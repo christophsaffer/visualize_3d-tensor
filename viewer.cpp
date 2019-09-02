@@ -48,7 +48,8 @@ viewer::viewer(QOpenGLWidget *parent) : QOpenGLWidget(parent) {
 
 void viewer::initializeGL() {
   glEnable(GL_MULTISAMPLE);
-  glClearColor(1, 1, 1, 1);
+  glEnable(GL_DEPTH_TEST);
+  glClearColor(0, 0, 0, 1);
 }
 
 void viewer::resizeGL(int width, int height) {
