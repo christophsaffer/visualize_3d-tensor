@@ -12,7 +12,7 @@
 
 using namespace std;
 
-viewer::viewer(QOpenGLWidget* parent) : QOpenGLWidget(parent) {
+viewer::viewer(QOpenGLWidget *parent) : QOpenGLWidget(parent) {
   setMouseTracking(true);
   show();
 
@@ -20,7 +20,8 @@ viewer::viewer(QOpenGLWidget* parent) : QOpenGLWidget(parent) {
   uniform_real_distribution<float> distribution{};
   constexpr int count = 100;
   data.reserve(3 * count);
-  for (int i = 0; i < 3 * count; ++i) data.push_back(distribution(rng));
+  for (int i = 0; i < 3 * count; ++i)
+    data.push_back(distribution(rng));
 }
 
 void viewer::initializeGL() {
@@ -39,6 +40,76 @@ void viewer::resizeGL(int width, int height) {
   compute_look_at();
 }
 
+void paintCube(int x, int y, int z, float color) {
+
+  float r;
+  float g;
+  float b;
+  float alpha = 1.0f;
+
+  if (color < 0) {
+    r = 1.0f + color;
+    g = 1.0f + color;
+    b = 1.0f;
+  } else if (color > 0) {
+    r = 1.0f;
+    g = 1.0f - color;
+    b = 1.0f - color;
+  } else {
+    r = 1.0f;
+    g = 1.0f;
+    b = 1.0f;
+  }
+
+  glBegin(GL_POLYGON);
+  glColor4f(r, g, b, alpha);
+  glVertex3f(-z, -y, -x);
+  glVertex3f(-z - 1, -y, -x);
+  glVertex3f(-z - 1, -y - 1, -x);
+  glVertex3f(-z, -y - 1, -x);
+  glEnd();
+
+  glBegin(GL_POLYGON);
+  glColor4f(r, g, b, alpha);
+  glVertex3f(-z - 1, -y, -x);
+  glVertex3f(-z - 1, -y, -x - 1);
+  glVertex3f(-z - 1, -y - 1, -x - 1);
+  glVertex3f(-z - 1, -y - 1, -x);
+  glEnd();
+
+  glBegin(GL_POLYGON);
+  glColor4f(r, g, b, alpha);
+  glVertex3f(-z, -y, -x);
+  glVertex3f(-z, -y, -x - 1);
+  glVertex3f(-z, -y - 1, -x - 1);
+  glVertex3f(-z, -y - 1, -x);
+  glEnd();
+
+  glBegin(GL_POLYGON);
+  glColor4f(r, g, b, alpha);
+  glVertex3f(-z, -y, -x - 1);
+  glVertex3f(-z - 1, -y, -x - 1);
+  glVertex3f(-z - 1, -y - 1, -x - 1);
+  glVertex3f(-z, -y - 1, -x - 1);
+  glEnd();
+
+  glBegin(GL_POLYGON);
+  glColor4f(r, g, b, alpha);
+  glVertex3f(-z, -y, -x);
+  glVertex3f(-z - 1, -y, -x);
+  glVertex3f(-z - 1, -y, -x - 1);
+  glVertex3f(-z, -y, -x - 1);
+  glEnd();
+
+  glBegin(GL_POLYGON);
+  glColor4f(r, g, b, alpha);
+  glVertex3f(-z, -y - 1, -x);
+  glVertex3f(-z - 1, -y - 1, -x);
+  glVertex3f(-z - 1, -y - 1, -x - 1);
+  glVertex3f(-z, -y - 1, -x - 1);
+  glEnd();
+}
+
 void viewer::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -51,31 +122,32 @@ void viewer::paintGL() {
   }
 }
 
-void viewer::mouseMoveEvent(QMouseEvent* event) {
+void viewer::mouseMoveEvent(QMouseEvent *event) {
   const auto x_difference = event->x() - old_mouse_x_;
   const auto y_difference = event->y() - old_mouse_y_;
 
   switch (event->buttons()) {
-    case Qt::LeftButton:
-      rotate_on_screen(x_difference, y_difference);
-      break;
+  case Qt::LeftButton:
+    rotate_on_screen(x_difference, y_difference);
+    break;
 
-    case Qt::RightButton:
-      move_origin_on_screen(x_difference, y_difference);
-      break;
+  case Qt::RightButton:
+    move_origin_on_screen(x_difference, y_difference);
+    break;
   }
 
   old_mouse_x_ = event->x();
   old_mouse_y_ = event->y();
 }
 
-void viewer::wheelEvent(QWheelEvent* event) {
+void viewer::wheelEvent(QWheelEvent *event) {
   constexpr float scale_factor = 0.003;
   zoom(scale_factor * event->angleDelta().y());
 }
 
-void viewer::keyPressEvent(QKeyEvent* event) {
-  if (event->key() == Qt::Key_Escape) QApplication::quit();
+void viewer::keyPressEvent(QKeyEvent *event) {
+  if (event->key() == Qt::Key_Escape)
+    QApplication::quit();
 }
 
 void viewer::compute_look_at() {
