@@ -6,7 +6,11 @@
 #include <QWheelEvent>
 
 #include <cmath>
-#include <random>
+#include <cstdlib>
+#include <fstream>
+#include <glm/ext.hpp>
+#include <iostream>
+#include <limits>
 
 #include <glm/ext.hpp>
 
@@ -15,6 +19,7 @@ using namespace std;
 viewer::viewer(QOpenGLWidget *parent) : QOpenGLWidget(parent) {
   setMouseTracking(true);
   show();
+  viewer::zoom(-0.5f);
 
   ifstream istrm("../tensor.txt");
   string s;
