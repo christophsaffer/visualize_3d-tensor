@@ -16,12 +16,29 @@ viewer::viewer(QOpenGLWidget *parent) : QOpenGLWidget(parent) {
   setMouseTracking(true);
   show();
 
-  mt19937 rng{std::random_device{}()};
-  uniform_real_distribution<float> distribution{};
-  constexpr int count = 100;
-  data.reserve(3 * count);
-  for (int i = 0; i < 3 * count; ++i)
-    data.push_back(distribution(rng));
+  ifstream istrm("../tensor.txt");
+  string s;
+  float f;
+  float fmax = -numeric_limits<double>::infinity();
+  istrm >> s;
+  dim = stoi(s);
+  len = dim * dim * dim;
+  data.reserve(len);
+  if (!istrm.is_open()) {
+    cout << "failed to open file" << '\n';
+  } else {
+    for (int i = 0; i < len; ++i) {
+      istrm >> s;
+      s = s.substr(0, s.length() - 2);
+      f = stof(s);
+      if (abs(f) > fmax)
+        fmax = abs(f);
+      data.push_back(f);
+    }
+  }
+  for (int i = 0; i < len; ++i) {
+    data[i] /= fmax;
+  }
 }
 
 void viewer::initializeGL() {
@@ -112,13 +129,18 @@ void paintCube(int x, int y, int z, float color) {
 
 void viewer::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  glPointSize(5);
-  for (int i = 0; i < data.size(); i += 3) {
-    glBegin(GL_POINTS);
-    glColor3f(0, 0, 0);
-    glVertex3f(data[i], data[i + 1], data[i + 2]);
-    glEnd();
+  int n = 0;
+  float mtc = static_cast<float>(dim) / 2; // move to center
+  for (int i = 0; i < dim; ++i) {
+    for (int j = 0; j < dim; ++j) {
+      for (int k = 0; k < dim; ++k) {
+        if ((i > peel - 1) && (i < dim - peel) && (j > peel - 1) &&
+            (j < dim - peel) && (k > peel - 1) && (k < dim - peel)) {
+          paintCube(k - mtc, j - mtc, i - mtc, data[n]);
+        }
+        n++;
+      }
+    }
   }
 }
 
