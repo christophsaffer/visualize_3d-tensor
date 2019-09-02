@@ -1,6 +1,7 @@
 *
 !*.hpp
 !*.cpp
+!tensor.txt
 !CMakeLists.txt
 !README.md
 !LICENSE
