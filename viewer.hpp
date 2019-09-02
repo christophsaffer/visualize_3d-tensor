@@ -8,27 +8,27 @@
 class viewer : public QOpenGLWidget {
   Q_OBJECT
 
- public:
-  explicit viewer(QOpenGLWidget* parent = nullptr);
+public:
+  explicit viewer(QOpenGLWidget *parent = nullptr);
   ~viewer() = default;
 
- protected:
+protected:
   void initializeGL() override;
   void resizeGL(int width, int height) override;
   void paintGL() override;
 
-  void mouseMoveEvent(QMouseEvent* event) override;
-  void wheelEvent(QWheelEvent* event) override;
-  void keyPressEvent(QKeyEvent* event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void wheelEvent(QWheelEvent *event) override;
+  void keyPressEvent(QKeyEvent *event) override;
 
- private:
+private:
   void compute_look_at();
   float pixel_size() const noexcept;
   void move_origin_on_screen(int x_difference, int y_difference) noexcept;
   void rotate_on_screen(int x_difference, int y_difference) noexcept;
   void zoom(float scale) noexcept;
 
- private:
+private:
   static constexpr float pi_ = 3.141592654;
 
   // camera/frustum state
@@ -48,4 +48,7 @@ class viewer : public QOpenGLWidget {
   int old_mouse_y_{};
 
   std::vector<float> data;
+  int dim = 0;
+  int len = 0;
+  int peel = 0;
 };
