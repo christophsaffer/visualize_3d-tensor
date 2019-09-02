@@ -176,6 +176,17 @@ void viewer::wheelEvent(QWheelEvent *event) {
 void viewer::keyPressEvent(QKeyEvent *event) {
   if (event->key() == Qt::Key_Escape)
     QApplication::quit();
+
+  if (event->key() == Qt::Key_PageUp) {
+    if (2 * peel < dim)
+      peel += 1;
+  }
+
+  if (event->key() == Qt::Key_PageDown) {
+    if (peel > 0)
+      peel -= 1;
+  }
+  compute_look_at();
 }
 
 void viewer::compute_look_at() {
