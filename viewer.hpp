@@ -2,19 +2,22 @@
 
 #include <QOpenGLWidget>
 #include <glm/vec3.hpp>
-
 #include <vector>
+
+#include <iostream>
+#include <string>
 
 class viewer : public QOpenGLWidget {
   Q_OBJECT
 
 public:
-  explicit viewer(QOpenGLWidget *parent = nullptr);
+  viewer(std::string input, QOpenGLWidget *parent = nullptr);
   ~viewer() = default;
 
 protected:
   void initializeGL() override;
   void resizeGL(int width, int height) override;
+  void update_color();
   void paintGL() override;
 
   void mouseMoveEvent(QMouseEvent *event) override;
@@ -46,9 +49,13 @@ private:
   // cache
   int old_mouse_x_{};
   int old_mouse_y_{};
+  std::string file;
 
   std::vector<float> data;
+  std::vector<float> data_color;
   int dim = 0;
   int len = 0;
   int peel = 0;
+  float set_to_zero_at = 1e-16f;
+  float fmax;
 };

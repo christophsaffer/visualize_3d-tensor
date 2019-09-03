@@ -10,25 +10,25 @@
 #include <fstream>
 #include <glm/ext.hpp>
 #include <iostream>
-#include <limits>
-
-#include <glm/ext.hpp>
+#include <string>
 
 using namespace std;
 
-viewer::viewer(QOpenGLWidget *parent) : QOpenGLWidget(parent) {
+viewer::viewer(string input, QOpenGLWidget *parent) : QOpenGLWidget(parent) {
+
   setMouseTracking(true);
   show();
-  viewer::zoom(-0.5f);
+  file = input;
 
-  ifstream istrm("../tensor.txt");
+  ifstream istrm(file);
   string s;
   float f;
-  float fmax = -numeric_limits<double>::infinity();
   istrm >> s;
   dim = stoi(s);
   len = dim * dim * dim;
   data.reserve(len);
+  data_color.reserve(len);
+  fmax = -numeric_limits<double>::infinity();
   if (!istrm.is_open()) {
     cout << "failed to open file" << '\n';
   } else {
@@ -41,9 +41,9 @@ viewer::viewer(QOpenGLWidget *parent) : QOpenGLWidget(parent) {
       data.push_back(f);
     }
   }
-  for (int i = 0; i < len; ++i) {
-    data[i] /= fmax;
-  }
+  viewer::update_color();
+
+  viewer::zoom(-static_cast<float>(dim) / 15.0f);
 }
 
 void viewer::initializeGL() {
@@ -71,10 +71,12 @@ void paintCube(int x, int y, int z, float color) {
   float alpha = 1.0f;
 
   if (color < 0) {
-    r = 1.0f + color;
-    g = 1.0f + color;
+    color = pow(-color, 0.25);
+    r = 1.0f - color;
+    g = 1.0f - color;
     b = 1.0f;
   } else if (color > 0) {
+    color = pow(color, 0.25);
     r = 1.0f;
     g = 1.0f - color;
     b = 1.0f - color;
@@ -133,6 +135,20 @@ void paintCube(int x, int y, int z, float color) {
   glEnd();
 }
 
+void viewer::update_color() {
+  int j = 0;
+  for (int i = 0; i < len; ++i) {
+    if (abs(data[i]) < set_to_zero_at) {
+      data_color[i] = 0;
+      j++;
+    } else {
+      data_color[i] = data[i] / fmax;
+    }
+  }
+  cout << "Sparse-Limit: " << set_to_zero_at << '\n';
+  cout << "Sparse-Values: " << j << '\n';
+}
+
 void viewer::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   int n = 0;
@@ -142,7 +158,7 @@ void viewer::paintGL() {
       for (int k = 0; k < dim; ++k) {
         if ((i > peel - 1) && (i < dim - peel) && (j > peel - 1) &&
             (j < dim - peel) && (k > peel - 1) && (k < dim - peel)) {
-          paintCube(k - mtc, j - mtc, i - mtc, data[n]);
+          paintCube(k - mtc, j - mtc, i - mtc, data_color[n]);
         }
         n++;
       }
@@ -185,6 +201,21 @@ void viewer::keyPressEvent(QKeyEvent *event) {
   if (event->key() == Qt::Key_PageDown) {
     if (peel > 0)
       peel -= 1;
+  }
+  if (event->key() == Qt::Key_Up) {
+    if (set_to_zero_at > 1e-16f) {
+      set_to_zero_at *= 0.1;
+      cout << "Set values to sparse below: " << set_to_zero_at << '\n';
+      viewer::update_color();
+    }
+  }
+
+  if (event->key() == Qt::Key_Down) {
+    if (set_to_zero_at < 0.05) {
+      set_to_zero_at *= 10;
+      cout << "Set values to sparse below: " << set_to_zero_at << '\n';
+      viewer::update_color();
+    }
   }
   compute_look_at();
 }
