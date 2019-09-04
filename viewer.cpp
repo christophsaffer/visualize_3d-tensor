@@ -14,11 +14,19 @@
 
 using namespace std;
 
-viewer::viewer(string input, QOpenGLWidget *parent) : QOpenGLWidget(parent) {
+viewer::viewer(string input, float fmax_input, QOpenGLWidget *parent)
+    : QOpenGLWidget(parent) {
 
   setMouseTracking(true);
   show();
   file = input;
+  bool calc_fmax = true;
+  if (fmax_input == 0) {
+    fmax = -numeric_limits<double>::infinity();
+  } else {
+    calc_fmax = false;
+    fmax = fmax_input;
+  }
 
   ifstream istrm(file);
   string s;
@@ -28,19 +36,22 @@ viewer::viewer(string input, QOpenGLWidget *parent) : QOpenGLWidget(parent) {
   len = dim * dim * dim;
   data.reserve(len);
   data_color.reserve(len);
-  fmax = -numeric_limits<double>::infinity();
   if (!istrm.is_open()) {
     cout << "failed to open file" << '\n';
   } else {
     for (int i = 0; i < len; ++i) {
       istrm >> s;
-      s = s.substr(0, s.length() - 2);
+      s = s.substr(0, s.length() - 1);
       f = stof(s);
-      if (abs(f) > fmax)
-        fmax = abs(f);
+      if (calc_fmax) {
+        if (abs(f) > fmax) {
+          fmax = abs(f);
+        }
+      }
       data.push_back(f);
     }
   }
+  cout << "Using fmax = " << fmax << '\n';
   viewer::update_color();
 
   viewer::zoom(-static_cast<float>(dim) / 15.0f);

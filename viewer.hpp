@@ -11,7 +11,7 @@ class viewer : public QOpenGLWidget {
   Q_OBJECT
 
 public:
-  viewer(std::string input, QOpenGLWidget *parent = nullptr);
+  viewer(std::string input, float fmax_input, QOpenGLWidget *parent = nullptr);
   ~viewer() = default;
 
 protected:
@@ -56,6 +56,6 @@ private:
   int dim = 0;
   int len = 0;
   int peel = 0;
-  float set_to_zero_at = 1e-16f;
+  float set_to_zero_at = 1e-12;
   float fmax;
 };

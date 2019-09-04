@@ -18,14 +18,21 @@ int main(int argc, char **argv) {
   setlocale(LC_ALL, "C");
 
   std::string file = "../tensor.txt";
-  if (argc == 2) {
+  float fmax = 0;
+  if (argc == 3) {
+    std::istringstream inbuf1(argv[1]);
+    inbuf1 >> file;
+    std::istringstream inbuf2(argv[2]);
+    inbuf2 >> fmax;
+  } else if (argc == 2) {
     std::istringstream inbuf1(argv[1]);
     inbuf1 >> file;
   }
-  if (argc > 2) {
+  if (argc > 3) {
     std::cout << "Only one input file." << '\n';
     return 0;
   }
-  viewer v(file);
+  viewer v(file, fmax);
+  viewer v1(file, fmax);
   return application.exec();
 }
