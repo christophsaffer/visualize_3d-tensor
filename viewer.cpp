@@ -19,7 +19,10 @@ viewer::viewer(string input, float fmax_input, QOpenGLWidget *parent)
 
   setMouseTracking(true);
   show();
+
   file = input;
+  setWindowTitle(QString::fromLocal8Bit(file.c_str()));
+
   bool calc_fmax = true;
   if (fmax_input == 0) {
     fmax = -numeric_limits<double>::infinity();

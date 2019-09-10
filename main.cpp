@@ -29,10 +29,10 @@ int main(int argc, char **argv) {
     inbuf1 >> file;
   }
   if (argc > 3) {
-    std::cout << "Only one input file." << '\n';
+    std::cout << "Too many command line arguments." << '\n';
     return 0;
   }
   viewer v(file, fmax);
-  viewer v1(file, fmax);
+
   return application.exec();
 }
