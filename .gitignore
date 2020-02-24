@@ -1,7 +1,7 @@
 *
 !*.hpp
 !*.cpp
-!11dim_3tens.png
+!tensor.png
 !tensor.txt
 !CMakeLists.txt
 !README.md

@@ -2,4 +2,4 @@
 
 Project is based on [3d-viewer](https://github.com/lyrahgames/3d-viewer).
 
-![screenshot](11dim_3tens.png)
+![screenshot](tensor.png)
