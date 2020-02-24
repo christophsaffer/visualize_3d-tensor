@@ -2,4 +2,4 @@
 
 Project is based on [3d-viewer](https://github.com/lyrahgames/3d-viewer).
 
-![screenshot](tensord.png)
+![screenshot](tensor.png)
